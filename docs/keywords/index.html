@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Keyword reference | HESchema</title>
+  <link rel="stylesheet" href="../../style.css">
+  
+</head>
+<body>
+<header><nav aria-label="Main navigation"><a class="brand" href="../../">HESchema</a><a href="../../docs/quickstart/">Quickstart</a><a href="../../docs/keywords/">Keywords</a><a href="../../docs/dialects/">Dialects</a><a href="../../playground/">Playground</a><a href="https://github.com/HarshPopat23/HESchema-">GitHub</a></nav></header>
+<main class="reading">
+<h1>Keyword reference</h1><p>Choose a keyword to see its schema, passing data, and a recorded failure.</p><ul><li><a href="#compareFields"><code>compareFields</code></a></li><li><a href="#uniqueKeys"><code>uniqueKeys</code></a></li><li><a href="#aggregateCompare"><code>aggregateCompare</code></a></li><li><a href="#localReferences"><code>localReferences</code></a></li><li><a href="#sortedBy"><code>sortedBy</code></a></li><li><a href="#nonOverlapping"><code>nonOverlapping</code></a></li><li><a href="#tensorShapes"><code>tensorShapes</code></a></li><li><a href="#arithmeticEquals"><code>arithmeticEquals</code></a></li><li><a href="#assertExpression"><code>assertExpression</code></a></li></ul><section id="compareFields"><h2><code>compareFields</code></h2><p>Compare two values in the same document.</p>
+<a href="../../playground/?example=compareFields">Try in Playground</a>
+<details open><summary>Native HESchema JSON</summary>
+<h3>Schema</h3><pre><code>{
+  &quot;$schema&quot;: &quot;https://raw.githubusercontent.com/HarshPopat23/HESchema-/main/src/heschema/field-comparison-v1.json&quot;,
+  &quot;type&quot;: &quot;object&quot;,
+  &quot;compareFields&quot;: [
+    {
+      &quot;left&quot;: &quot;/min&quot;,
+      &quot;right&quot;: &quot;/max&quot;,
+      &quot;operator&quot;: &quot;lte&quot;,
+      &quot;mode&quot;: &quot;number&quot;
+    }
+  ]
+}</code></pre>
+<h3>Passing data</h3><pre><code>{
+  &quot;min&quot;: 2,
+  &quot;max&quot;: 2
+}</code></pre>
+<h3>Failing data</h3><pre><code>{
+  &quot;min&quot;: 3,
+  &quot;max&quot;: 2
+}</code></pre>
+<p><strong>Recorded error at <code>(document root)</code></strong> Comparison 0 failed: &#x27;/min&#x27; lte &#x27;/max&#x27; (number)</p></details>
+<details><summary>Options and edge cases</summary><p>Every rule supplies left and right JSON Pointers, an operator, and a mode. Numeric mode requires finite numbers and compares without coercion. JSON mode supports equality and inequality. Date mode compares calendar dates. Missing operands fail.</p><p><a href="https://github.com/HarshPopat23/HESchema-/tree/main/vocabulary/field-comparison/v1">Specification and conformance cases</a></p></details>
+</section><section id="uniqueKeys"><h2><code>uniqueKeys</code></h2><p>Require a distinct key or key tuple for every array item.</p>
+<a href="../../playground/?example=uniqueKeys">Try in Playground</a>
+<details open><summary>Native HESchema JSON</summary>
+<h3>Schema</h3><pre><code>{
+  &quot;$schema&quot;: &quot;https://raw.githubusercontent.com/HarshPopat23/HESchema-/main/src/heschema/relationships-v1.json&quot;,
+  &quot;type&quot;: &quot;array&quot;,
+  &quot;uniqueKeys&quot;: [
+    &quot;/sku&quot;
+  ]
+}</code></pre>
+<h3>Passing data</h3><pre><code>[
+  {
+    &quot;sku&quot;: &quot;A&quot;
+  },
+  {
+    &quot;sku&quot;: &quot;B&quot;
+  }
+]</code></pre>
+<h3>Failing data</h3><pre><code>[
+  {
+    &quot;sku&quot;: &quot;A&quot;,
+    &quot;price&quot;: 1
+  },
+  {
+    &quot;sku&quot;: &quot;A&quot;,
+    &quot;price&quot;: 2
+  }
+]</code></pre>
+<p><strong>Recorded error at <code>/1</code></strong> Item 1 has the same key as item 0</p></details>
+<details><summary>Options and edge cases</summary><p>Pointers are relative to each item. All components together form one key. Missing values differ from explicit null, but two otherwise equal tuples with missing components still collide. Add required to enforce presence.</p><p><a href="https://github.com/HarshPopat23/HESchema-/tree/main/vocabulary/keyed-uniqueness/v1">Specification and conformance cases</a></p></details>
+</section><section id="aggregateCompare"><h2><code>aggregateCompare</code></h2><p>Compare declared values with array counts or sums.</p>
+<a href="../../playground/?example=aggregateCompare">Try in Playground</a>
+<details open><summary>Native HESchema JSON</summary>
+<h3>Schema</h3><pre><code>{
+  &quot;$schema&quot;: &quot;https://raw.githubusercontent.com/HarshPopat23/HESchema-/main/src/heschema/relationships-v2.json&quot;,
+  &quot;type&quot;: &quot;object&quot;,
+  &quot;aggregateCompare&quot;: [
+    {
+      &quot;left&quot;: &quot;/itemCount&quot;,
+      &quot;operator&quot;: &quot;eq&quot;,
+      &quot;right&quot;: {
+        &quot;count&quot;: &quot;/items&quot;
+      }
+    },
+    {
+      &quot;left&quot;: &quot;/total&quot;,
+      &quot;operator&quot;: &quot;eq&quot;,
+      &quot;right&quot;: {
+        &quot;sum&quot;: {
+          &quot;array&quot;: &quot;/items&quot;,
+          &quot;item&quot;: &quot;/minor&quot;
+        }
+      }
+    }
+  ]
+}</code></pre>
+<h3>Passing data</h3><pre><code>{
+  &quot;itemCount&quot;: 2,
+  &quot;items&quot;: [
+    {
+      &quot;minor&quot;: 7
+    },
+    {
+      &quot;minor&quot;: -2
+    }
+  ],
+  &quot;total&quot;: 5
+}</code></pre>
+<h3>Failing data</h3><pre><code>{
+  &quot;itemCount&quot;: 1,
+  &quot;items&quot;: [
+    {
+      &quot;minor&quot;: 7
+    },
+    {
+      &quot;minor&quot;: -2
+    }
+  ],
+  &quot;total&quot;: 5
+}</code></pre>
+<p><strong>Recorded error at <code>(document root)</code></strong> Aggregate comparison 0 failed (eq)</p></details>
+<details><summary>Options and edge cases</summary><p>Each operand selects an integer, a count, or a sum of item values. Every rule must pass. Empty collections count and sum to zero. Missing pointers, fractions, booleans, and numeric strings fail.</p><p><a href="https://github.com/HarshPopat23/HESchema-/tree/main/vocabulary/relationships/v2">Specification and conformance cases</a></p></details>
+</section><section id="localReferences"><h2><code>localReferences</code></h2><p>Require each citation to match exactly one included source.</p>
+<a href="../../playground/?example=localReferences">Try in Playground</a>
+<details open><summary>Native HESchema JSON</summary>
+<h3>Schema</h3><pre><code>{
+  &quot;$schema&quot;: &quot;https://raw.githubusercontent.com/HarshPopat23/HESchema-/main/src/heschema/relationships-v2.json&quot;,
+  &quot;type&quot;: &quot;object&quot;,
+  &quot;localReferences&quot;: [
+    {
+      &quot;source&quot;: {
+        &quot;array&quot;: &quot;/citations&quot;,
+        &quot;keys&quot;: [
+          &quot;/sourceId&quot;
+        ]
+      },
+      &quot;target&quot;: {
+        &quot;array&quot;: &quot;/sources&quot;,
+        &quot;keys&quot;: [
+          &quot;/id&quot;
+        ]
+      }
+    }
+  ]
+}</code></pre>
+<h3>Passing data</h3><pre><code>{
+  &quot;sources&quot;: [
+    {
+      &quot;id&quot;: &quot;report-1&quot;
+    }
+  ],
+  &quot;citations&quot;: [
+    {
+      &quot;sourceId&quot;: &quot;report-1&quot;
+    }
+  ]
+}</code></pre>
+<h3>Failing data</h3><pre><code>{
+  &quot;sources&quot;: [
+    {
+      &quot;id&quot;: &quot;report-1&quot;
+    }
+  ],
+  &quot;citations&quot;: [
+    {
+      &quot;sourceId&quot;: &quot;report-9&quot;
+    }
+  ]
+}</code></pre>
+<p><strong>Recorded error at <code>/citations/0</code></strong> Reference has no matching local target</p></details>
+<details><summary>Options and edge cases</summary><p>Each side selects an array and an ordered list of item-relative key pointers. Both key lists must have the same length. Repeated source references can pass. Missing keys and duplicate target tuples fail, even if no source references the duplicate.</p><p><a href="https://github.com/HarshPopat23/HESchema-/tree/main/vocabulary/relationships/v2">Specification and conformance cases</a></p></details>
+</section><section id="sortedBy"><h2><code>sortedBy</code></h2><p>Check the order of array items by a selected key.</p>
+<a href="../../playground/?example=sortedBy">Try in Playground</a>
+<details open><summary>Native HESchema JSON</summary>
+<h3>Schema</h3><pre><code>{
+  &quot;$schema&quot;: &quot;https://raw.githubusercontent.com/HarshPopat23/HESchema-/main/src/heschema/relationships-v3.json&quot;,
+  &quot;type&quot;: &quot;array&quot;,
+  &quot;sortedBy&quot;: {
+    &quot;key&quot;: &quot;/key&quot;,
+    &quot;mode&quot;: &quot;number&quot;,
+    &quot;direction&quot;: &quot;ascending&quot;,
+    &quot;ties&quot;: &quot;allow&quot;
+  }
+}</code></pre>
+<h3>Passing data</h3><pre><code>[
+  {
+    &quot;key&quot;: 1
+  },
+  {
+    &quot;key&quot;: 1
+  },
+  {
+    &quot;key&quot;: 2
+  }
+]</code></pre>
+<h3>Failing data</h3><pre><code>[
+  {
+    &quot;key&quot;: 2
+  },
+  {
+    &quot;key&quot;: 1
+  }
+]</code></pre>
+<p><strong>Recorded error at <code>/1/key</code></strong> Item 1 violates the ordering relative to item 0</p></details>
+<details><summary>Options and edge cases</summary><p>Choose ascending or descending order and allow or forbid ties. The key is relative to each item. Even a single item needs a valid key. The validator checks submitted order and leaves the input untouched.</p><p><a href="https://github.com/HarshPopat23/HESchema-/tree/main/vocabulary/relationships/v3">Specification and conformance cases</a></p></details>
+</section><section id="nonOverlapping"><h2><code>nonOverlapping</code></h2><p>Reject overlapping intervals in an array.</p>
+<a href="../../playground/?example=nonOverlapping">Try in Playground</a>
+<details open><summary>Native HESchema JSON</summary>
+<h3>Schema</h3><pre><code>{
+  &quot;$schema&quot;: &quot;https://raw.githubusercontent.com/HarshPopat23/HESchema-/main/src/heschema/relationships-v3.json&quot;,
+  &quot;type&quot;: &quot;array&quot;,
+  &quot;nonOverlapping&quot;: {
+    &quot;start&quot;: &quot;/start&quot;,
+    &quot;end&quot;: &quot;/end&quot;,
+    &quot;mode&quot;: &quot;code-point-offset&quot;,
+    &quot;bounds&quot;: &quot;half-open&quot;
+  }
+}</code></pre>
+<h3>Passing data</h3><pre><code>[
+  {
+    &quot;start&quot;: 3,
+    &quot;end&quot;: 5
+  },
+  {
+    &quot;start&quot;: 0,
+    &quot;end&quot;: 3
+  }
+]</code></pre>
+<h3>Failing data</h3><pre><code>[
+  {
+    &quot;start&quot;: 0,
+    &quot;end&quot;: 8
+  },
+  {
+    &quot;start&quot;: 2,
+    &quot;end&quot;: 4
+  }
+]</code></pre>
+<p><strong>Recorded error at <code>/1</code></strong> Interval overlaps item 0</p></details>
+<details><summary>Options and edge cases</summary><p>Select start and end relative to each item. Adjacent half-open intervals can share an endpoint. Closed intervals that share an endpoint overlap. Missing or reversed endpoints fail. Input order does not matter.</p><p><a href="https://github.com/HarshPopat23/HESchema-/tree/main/vocabulary/relationships/v3">Specification and conformance cases</a></p></details>
+</section><section id="tensorShapes"><h2><code>tensorShapes</code></h2><p>Check tensor rank, axis lengths, and shared dimensions.</p>
+<a href="../../playground/?example=tensorShapes">Try in Playground</a>
+<details open><summary>Native HESchema JSON</summary>
+<h3>Schema</h3><pre><code>{
+  &quot;$schema&quot;: &quot;https://raw.githubusercontent.com/HarshPopat23/HESchema-/main/src/heschema/ml-v1.json&quot;,
+  &quot;type&quot;: &quot;object&quot;,
+  &quot;tensorShapes&quot;: [
+    {
+      &quot;path&quot;: &quot;/embeddings&quot;,
+      &quot;shape&quot;: [
+        &quot;batch&quot;,
+        3
+      ]
+    },
+    {
+      &quot;path&quot;: &quot;/labels&quot;,
+      &quot;shape&quot;: [
+        &quot;batch&quot;
+      ]
+    }
+  ]
+}</code></pre>
+<h3>Passing data</h3><pre><code>{
+  &quot;embeddings&quot;: [
+    [
+      1,
+      2,
+      3
+    ],
+    [
+      4,
+      5,
+      6
+    ]
+  ],
+  &quot;labels&quot;: [
+    0,
+    1
+  ]
+}</code></pre>
+<h3>Failing data</h3><pre><code>{
+  &quot;embeddings&quot;: [
+    [
+      1,
+      2
+    ]
+  ],
+  &quot;labels&quot;: [
+    0
+  ]
+}</code></pre>
+<p><strong>Recorded error at <code>/embeddings/0</code></strong> Expected size 3 at axis 1, got 2</p></details>
+<details><summary>Options and edge cases</summary><p>A numeric dimension fixes its length. A symbol binds a length across the declarations in the same assertion. Null leaves the length unspecified but still requires a rectangular tensor. An empty axis exposes no deeper lengths. Use standard items and type for numeric element requirements.</p><p><a href="https://github.com/HarshPopat23/HESchema-/tree/main/vocabulary/ml/v1">Specification and conformance cases</a></p></details>
+</section><section id="arithmeticEquals"><h2><code>arithmeticEquals</code></h2><p>Check supplied arithmetic results using exact decimal strings.</p>
+<a href="../../playground/?example=arithmeticEquals">Try in Playground</a>
+<details open><summary>Native HESchema JSON</summary>
+<h3>Schema</h3><pre><code>{
+  &quot;$schema&quot;: &quot;https://raw.githubusercontent.com/HarshPopat23/HESchema-/main/src/heschema/relationships-v4.json&quot;,
+  &quot;type&quot;: &quot;object&quot;,
+  &quot;arithmeticEquals&quot;: [
+    {
+      &quot;left&quot;: &quot;/a&quot;,
+      &quot;right&quot;: &quot;/b&quot;,
+      &quot;result&quot;: &quot;/r&quot;,
+      &quot;operation&quot;: &quot;add&quot;
+    }
+  ]
+}</code></pre>
+<h3>Passing data</h3><pre><code>{
+  &quot;a&quot;: &quot;0.1&quot;,
+  &quot;b&quot;: &quot;0.2&quot;,
+  &quot;r&quot;: &quot;0.3&quot;
+}</code></pre>
+<h3>Failing data</h3><pre><code>{
+  &quot;a&quot;: &quot;0.1&quot;,
+  &quot;b&quot;: &quot;0.2&quot;,
+  &quot;r&quot;: &quot;0.30000000000000004&quot;
+}</code></pre>
+<p><strong>Recorded error at <code>/r</code></strong> Arithmetic rule 0 failed (add)</p></details>
+<details><summary>Options and edge cases</summary><p>Choose add, subtract, multiply, divide, or percentOf. A rounding rule can set the scale and mode. Numeric JSON tokens, exponent notation, and division by zero fail. The assertion validates the result without replacing it.</p><p><a href="https://github.com/HarshPopat23/HESchema-/tree/main/vocabulary/relationships/v4">Specification and conformance cases</a></p></details>
+</section><section id="assertExpression"><h2><code>assertExpression</code></h2><p>This is experimental documentation. The examples below illustrate proposed evaluator bindings. They require an expression evaluator and are outside the native dialects and playground in this release.</p>
+<details><summary>Structured JSON illustration</summary><pre><code>{
+  &quot;assertExpression&quot;: [
+    {
+      &quot;&lt;=&quot;: [
+        {
+          &quot;var&quot;: &quot;min&quot;
+        },
+        {
+          &quot;var&quot;: &quot;max&quot;
+        }
+      ]
+    }
+  ]
+}</code></pre><p>The prefix operator takes two operands resolved from the current object.</p></details>
+<details><summary>CEL illustration</summary><pre><code>{
+  &quot;assertExpression&quot;: [
+    &quot;self.min &lt;= self.max&quot;
+  ]
+}</code></pre><p>This assumes an evaluator binds <code>self</code> to the current object.</p></details>
+<p>Both illustrate the rule that <code>min</code> must be less than or equal to <code>max</code>. With numeric fields, <code>{"min": 2, "max": 3}</code> passes and <code>{"min": 4, "max": 3}</code> fails. Coercion, missing values, diagnostics, and host functions depend on the evaluator. Use the native <a href="#compareFields"><code>compareFields</code> example</a> for executable validation.</p></section>
+</main>
+<footer><div class="footer-inner"><a href="https://github.com/HarshPopat23/HESchema-/tree/main/vocabulary">Vocabulary specifications and conformance cases</a></div></footer>
+</body>
+</html>

@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dialects | HESchema</title>
+  <link rel="stylesheet" href="../../style.css">
+  
+</head>
+<body>
+<header><nav aria-label="Main navigation"><a class="brand" href="../../">HESchema</a><a href="../../docs/quickstart/">Quickstart</a><a href="../../docs/keywords/">Keywords</a><a href="../../docs/dialects/">Dialects</a><a href="../../playground/">Playground</a><a href="https://github.com/HarshPopat23/HESchema-">GitHub</a></nav></header>
+<main class="reading">
+<h1>Dialects and compatibility</h1><p>Use the linked meta-schema URL as the root <code>$schema</code>. These dialects extend Draft 2020-12. The Python validator implements their custom keywords.</p><div class="table"><table><thead><tr><th scope="col">Dialect</th><th scope="col">$schema URI</th><th scope="col">Custom keywords</th></tr></thead><tbody><tr><th scope="row">Field Comparison v1</th><td><a href="https://raw.githubusercontent.com/HarshPopat23/HESchema-/main/src/heschema/field-comparison-v1.json"><code>field-comparison-v1.json</code></a></td><td>compareFields</td></tr><tr><th scope="row">Relationships v1</th><td><a href="https://raw.githubusercontent.com/HarshPopat23/HESchema-/main/src/heschema/relationships-v1.json"><code>relationships-v1.json</code></a></td><td>compareFields, uniqueKeys</td></tr><tr><th scope="row">Relationships v2</th><td><a href="https://raw.githubusercontent.com/HarshPopat23/HESchema-/main/src/heschema/relationships-v2.json"><code>relationships-v2.json</code></a></td><td>All v1 keywords plus aggregateCompare, localReferences</td></tr><tr><th scope="row">Relationships v3</th><td><a href="https://raw.githubusercontent.com/HarshPopat23/HESchema-/main/src/heschema/relationships-v3.json"><code>relationships-v3.json</code></a></td><td>All v2 keywords plus sortedBy, nonOverlapping</td></tr><tr><th scope="row">Relationships v4</th><td><a href="https://raw.githubusercontent.com/HarshPopat23/HESchema-/main/src/heschema/relationships-v4.json"><code>relationships-v4.json</code></a></td><td>All v3 keywords plus arithmeticEquals</td></tr><tr><th scope="row">ML v1</th><td><a href="https://raw.githubusercontent.com/HarshPopat23/HESchema-/main/src/heschema/ml-v1.json"><code>ml-v1.json</code></a></td><td>tensorShapes</td></tr></tbody></table></div><h2>Experimental expressions</h2><p><a href="../keywords/#assertExpression"><code>assertExpression</code></a> requires a separate experimental evaluator. Each URI in the table selects only its documented native vocabulary.</p>
+</main>
+<footer><div class="footer-inner"><a href="https://github.com/HarshPopat23/HESchema-/tree/main/vocabulary">Vocabulary specifications and conformance cases</a></div></footer>
+</body>
+</html>

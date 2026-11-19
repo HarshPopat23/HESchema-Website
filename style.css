@@ -1,0 +1,48 @@
+:root {
+  color-scheme: light;
+  --bg: #f5f7fb;
+  --surface: #fff;
+  --text: #101827;
+  --muted: #4b556b;
+  --accent: #294bc0;
+  --border: #d6deed;
+  --code: #0e1424;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 1rem/1.65 system-ui, sans-serif; }
+a { color: var(--accent); text-underline-offset: .18em; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+header, footer { background: var(--surface); border-block-end: 1px solid var(--border); }
+nav, main, .footer-inner { width: min(100% - 2rem, 68rem); margin-inline: auto; }
+nav { display: flex; flex-wrap: wrap; gap: .6rem 1.25rem; padding-block: 1rem; }
+.brand { color: var(--text); font-weight: 750; margin-inline-end: auto; }
+main { padding-block: clamp(1.5rem, 5vw, 4rem); min-height: 70vh; }
+.reading { max-width: 52rem; }
+h1, h2, h3 { line-height: 1.2; letter-spacing: -.02em; }
+h1 { font-size: clamp(2rem, 6vw, 3.6rem); margin: 0 0 1rem; }
+h2 { margin-top: 2rem; }
+p { max-width: 70ch; }
+.lead, .muted { color: var(--muted); }
+.columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.5rem; }
+.hero { align-items: center; }
+.card, details { border: 1px solid var(--border); border-radius: .65rem; padding: 1rem; background: var(--surface); }
+details { margin-block: .6rem; }
+summary { cursor: pointer; font-weight: 650; }
+pre { background: var(--code); color: #e3ebff; padding: 1rem; border-radius: .55rem; overflow: auto; }
+pre, code, textarea { font-family: ui-monospace, monospace; font-size: .92rem; }
+button, select, textarea, .button { border: 1px solid var(--border); border-radius: .4rem; padding: .55rem .75rem; color: var(--text); background: white; }
+button, select, .button { font: inherit; }
+button, .button { cursor: pointer; }
+button:disabled { cursor: wait; opacity: .7; }
+.primary { background: var(--accent); color: white; border-color: var(--accent); }
+.button { display: inline-block; text-decoration: none; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: .65rem; margin-block: 1rem; }
+label { display: block; font-weight: 650; }
+textarea { display: block; width: 100%; min-height: 21rem; resize: vertical; }
+#result { white-space: pre-wrap; overflow-wrap: anywhere; }
+.table { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; background: white; }
+th, td { padding: .65rem; text-align: left; border-bottom: 1px solid var(--border); }
+.footer-inner { padding-block: 1rem; }
+section[id] { scroll-margin-top: 1rem; }
+@media (max-width: 45rem) { .columns { grid-template-columns: 1fr; } }
