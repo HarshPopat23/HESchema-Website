@@ -1,0 +1,475 @@
+{
+  "compareFields": {
+    "dialect": "field-comparison-v1",
+    "source": "vocabulary/field-comparison/v1",
+    "schema": {
+      "$schema": "https://raw.githubusercontent.com/HarshPopat23/HESchema-/main/src/heschema/field-comparison-v1.json",
+      "type": "object",
+      "compareFields": [
+        {
+          "left": "/min",
+          "right": "/max",
+          "operator": "lte",
+          "mode": "number"
+        }
+      ]
+    },
+    "pass": {
+      "min": 2,
+      "max": 2
+    },
+    "fail": {
+      "min": 3,
+      "max": 2
+    },
+    "results": {
+      "pass": {
+        "valid": true,
+        "errors": []
+      },
+      "fail": {
+        "valid": false,
+        "errors": [
+          {
+            "code": "SCHEMA_INVALID",
+            "stage": "schema",
+            "instanceLocation": "",
+            "message": "Comparison 0 failed: '/min' lte '/max' (number)",
+            "repair": "correct_output",
+            "schemaLocation": "/compareFields",
+            "evaluationLocation": "/compareFields",
+            "keyword": "compareFields",
+            "path": ""
+          }
+        ]
+      }
+    }
+  },
+  "uniqueKeys": {
+    "dialect": "relationships-v1",
+    "source": "vocabulary/keyed-uniqueness/v1",
+    "schema": {
+      "$schema": "https://raw.githubusercontent.com/HarshPopat23/HESchema-/main/src/heschema/relationships-v1.json",
+      "type": "array",
+      "uniqueKeys": [
+        "/sku"
+      ]
+    },
+    "pass": [
+      {
+        "sku": "A"
+      },
+      {
+        "sku": "B"
+      }
+    ],
+    "fail": [
+      {
+        "sku": "A",
+        "price": 1
+      },
+      {
+        "sku": "A",
+        "price": 2
+      }
+    ],
+    "results": {
+      "pass": {
+        "valid": true,
+        "errors": []
+      },
+      "fail": {
+        "valid": false,
+        "errors": [
+          {
+            "code": "SCHEMA_INVALID",
+            "stage": "schema",
+            "instanceLocation": "/1",
+            "message": "Item 1 has the same key as item 0",
+            "repair": "correct_output",
+            "schemaLocation": "/uniqueKeys",
+            "evaluationLocation": "/uniqueKeys",
+            "keyword": "uniqueKeys",
+            "path": "/1"
+          }
+        ]
+      }
+    }
+  },
+  "aggregateCompare": {
+    "dialect": "relationships-v2",
+    "source": "vocabulary/relationships/v2",
+    "schema": {
+      "$schema": "https://raw.githubusercontent.com/HarshPopat23/HESchema-/main/src/heschema/relationships-v2.json",
+      "type": "object",
+      "aggregateCompare": [
+        {
+          "left": "/itemCount",
+          "operator": "eq",
+          "right": {
+            "count": "/items"
+          }
+        },
+        {
+          "left": "/total",
+          "operator": "eq",
+          "right": {
+            "sum": {
+              "array": "/items",
+              "item": "/minor"
+            }
+          }
+        }
+      ]
+    },
+    "pass": {
+      "itemCount": 2,
+      "items": [
+        {
+          "minor": 7
+        },
+        {
+          "minor": -2
+        }
+      ],
+      "total": 5
+    },
+    "fail": {
+      "itemCount": 1,
+      "items": [
+        {
+          "minor": 7
+        },
+        {
+          "minor": -2
+        }
+      ],
+      "total": 5
+    },
+    "results": {
+      "pass": {
+        "valid": true,
+        "errors": []
+      },
+      "fail": {
+        "valid": false,
+        "errors": [
+          {
+            "code": "SCHEMA_INVALID",
+            "stage": "schema",
+            "instanceLocation": "",
+            "message": "Aggregate comparison 0 failed (eq)",
+            "repair": "correct_output",
+            "schemaLocation": "/aggregateCompare",
+            "evaluationLocation": "/aggregateCompare",
+            "keyword": "aggregateCompare",
+            "path": ""
+          }
+        ]
+      }
+    }
+  },
+  "localReferences": {
+    "dialect": "relationships-v2",
+    "source": "vocabulary/relationships/v2",
+    "schema": {
+      "$schema": "https://raw.githubusercontent.com/HarshPopat23/HESchema-/main/src/heschema/relationships-v2.json",
+      "type": "object",
+      "localReferences": [
+        {
+          "source": {
+            "array": "/citations",
+            "keys": [
+              "/sourceId"
+            ]
+          },
+          "target": {
+            "array": "/sources",
+            "keys": [
+              "/id"
+            ]
+          }
+        }
+      ]
+    },
+    "pass": {
+      "sources": [
+        {
+          "id": "report-1"
+        }
+      ],
+      "citations": [
+        {
+          "sourceId": "report-1"
+        }
+      ]
+    },
+    "fail": {
+      "sources": [
+        {
+          "id": "report-1"
+        }
+      ],
+      "citations": [
+        {
+          "sourceId": "report-9"
+        }
+      ]
+    },
+    "results": {
+      "pass": {
+        "valid": true,
+        "errors": []
+      },
+      "fail": {
+        "valid": false,
+        "errors": [
+          {
+            "code": "SCHEMA_INVALID",
+            "stage": "schema",
+            "instanceLocation": "/citations/0",
+            "message": "Reference has no matching local target",
+            "repair": "correct_output",
+            "schemaLocation": "/localReferences",
+            "evaluationLocation": "/localReferences",
+            "keyword": "localReferences",
+            "path": "/citations/0"
+          }
+        ]
+      }
+    }
+  },
+  "sortedBy": {
+    "dialect": "relationships-v3",
+    "source": "vocabulary/relationships/v3",
+    "schema": {
+      "$schema": "https://raw.githubusercontent.com/HarshPopat23/HESchema-/main/src/heschema/relationships-v3.json",
+      "type": "array",
+      "sortedBy": {
+        "key": "/key",
+        "mode": "number",
+        "direction": "ascending",
+        "ties": "allow"
+      }
+    },
+    "pass": [
+      {
+        "key": 1
+      },
+      {
+        "key": 1
+      },
+      {
+        "key": 2
+      }
+    ],
+    "fail": [
+      {
+        "key": 2
+      },
+      {
+        "key": 1
+      }
+    ],
+    "results": {
+      "pass": {
+        "valid": true,
+        "errors": []
+      },
+      "fail": {
+        "valid": false,
+        "errors": [
+          {
+            "code": "SCHEMA_INVALID",
+            "stage": "schema",
+            "instanceLocation": "/1/key",
+            "message": "Item 1 violates the ordering relative to item 0",
+            "repair": "correct_output",
+            "schemaLocation": "/sortedBy",
+            "evaluationLocation": "/sortedBy",
+            "keyword": "sortedBy",
+            "path": "/1/key"
+          }
+        ]
+      }
+    }
+  },
+  "nonOverlapping": {
+    "dialect": "relationships-v3",
+    "source": "vocabulary/relationships/v3",
+    "schema": {
+      "$schema": "https://raw.githubusercontent.com/HarshPopat23/HESchema-/main/src/heschema/relationships-v3.json",
+      "type": "array",
+      "nonOverlapping": {
+        "start": "/start",
+        "end": "/end",
+        "mode": "code-point-offset",
+        "bounds": "half-open"
+      }
+    },
+    "pass": [
+      {
+        "start": 3,
+        "end": 5
+      },
+      {
+        "start": 0,
+        "end": 3
+      }
+    ],
+    "fail": [
+      {
+        "start": 0,
+        "end": 8
+      },
+      {
+        "start": 2,
+        "end": 4
+      }
+    ],
+    "results": {
+      "pass": {
+        "valid": true,
+        "errors": []
+      },
+      "fail": {
+        "valid": false,
+        "errors": [
+          {
+            "code": "SCHEMA_INVALID",
+            "stage": "schema",
+            "instanceLocation": "/1",
+            "message": "Interval overlaps item 0",
+            "repair": "correct_output",
+            "schemaLocation": "/nonOverlapping",
+            "evaluationLocation": "/nonOverlapping",
+            "keyword": "nonOverlapping",
+            "path": "/1"
+          }
+        ]
+      }
+    }
+  },
+  "tensorShapes": {
+    "dialect": "ml-v1",
+    "source": "vocabulary/ml/v1",
+    "schema": {
+      "$schema": "https://raw.githubusercontent.com/HarshPopat23/HESchema-/main/src/heschema/ml-v1.json",
+      "type": "object",
+      "tensorShapes": [
+        {
+          "path": "/embeddings",
+          "shape": [
+            "batch",
+            3
+          ]
+        },
+        {
+          "path": "/labels",
+          "shape": [
+            "batch"
+          ]
+        }
+      ]
+    },
+    "pass": {
+      "embeddings": [
+        [
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6
+        ]
+      ],
+      "labels": [
+        0,
+        1
+      ]
+    },
+    "fail": {
+      "embeddings": [
+        [
+          1,
+          2
+        ]
+      ],
+      "labels": [
+        0
+      ]
+    },
+    "results": {
+      "pass": {
+        "valid": true,
+        "errors": []
+      },
+      "fail": {
+        "valid": false,
+        "errors": [
+          {
+            "code": "SCHEMA_INVALID",
+            "stage": "schema",
+            "instanceLocation": "/embeddings/0",
+            "message": "Expected size 3 at axis 1, got 2",
+            "repair": "correct_output",
+            "schemaLocation": "/tensorShapes",
+            "evaluationLocation": "/tensorShapes",
+            "keyword": "tensorShapes",
+            "path": "/embeddings/0"
+          }
+        ]
+      }
+    }
+  },
+  "arithmeticEquals": {
+    "dialect": "relationships-v4",
+    "source": "vocabulary/relationships/v4",
+    "schema": {
+      "$schema": "https://raw.githubusercontent.com/HarshPopat23/HESchema-/main/src/heschema/relationships-v4.json",
+      "type": "object",
+      "arithmeticEquals": [
+        {
+          "left": "/a",
+          "right": "/b",
+          "result": "/r",
+          "operation": "add"
+        }
+      ]
+    },
+    "pass": {
+      "a": "0.1",
+      "b": "0.2",
+      "r": "0.3"
+    },
+    "fail": {
+      "a": "0.1",
+      "b": "0.2",
+      "r": "0.30000000000000004"
+    },
+    "results": {
+      "pass": {
+        "valid": true,
+        "errors": []
+      },
+      "fail": {
+        "valid": false,
+        "errors": [
+          {
+            "code": "SCHEMA_INVALID",
+            "stage": "schema",
+            "instanceLocation": "/r",
+            "message": "Arithmetic rule 0 failed (add)",
+            "repair": "correct_output",
+            "schemaLocation": "/arithmeticEquals",
+            "evaluationLocation": "/arithmeticEquals",
+            "keyword": "arithmeticEquals",
+            "path": "/r"
+          }
+        ]
+      }
+    }
+  }
+}

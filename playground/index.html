@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Playground | HESchema</title>
+  <link rel="stylesheet" href="../style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+<header><nav aria-label="Main navigation"><a class="brand" href="../">HESchema</a><a href="../docs/quickstart/">Quickstart</a><a href="../docs/keywords/">Keywords</a><a href="../docs/dialects/">Dialects</a><a href="../playground/">Playground</a><a href="https://github.com/HarshPopat23/HESchema-">GitHub</a></nav></header>
+<main>
+<h1>Playground</h1>
+<p>Start with a working schema. Switch between passing and failing data to see how the rule behaves.</p>
+<p class="muted">This static site can show recorded results for the exact examples. <a href="../docs/quickstart/#live">Run the local server</a> to validate edited schemas or data with HESchema.</p>
+<noscript><p>Enable JavaScript for the editors, or <a href="../docs/keywords/">read the examples and recorded results</a>.</p></noscript>
+<label for="preset">Example</label><select id="preset" disabled></select>
+<div class="actions"><button type="button" id="pass" disabled>Passing data</button><button type="button" id="fail" disabled>Failing data</button><button type="button" id="reset" disabled>Reset editors</button></div>
+<div class="columns">
+<div><label for="schema">Schema (JSON)</label><textarea id="schema" spellcheck="false"></textarea></div>
+<div><label for="data">Data (JSON)</label><textarea id="data" spellcheck="false"></textarea></div>
+</div>
+<div class="actions"><button type="button" id="validate" class="primary" disabled>Validate</button></div>
+<section class="card" aria-labelledby="result-title"><h2 id="result-title">Validation result</h2><p id="result" role="status">Loading examples…</p></section>
+</main>
+<footer><div class="footer-inner"><a href="https://github.com/HarshPopat23/HESchema-/tree/main/vocabulary">Vocabulary specifications and conformance cases</a></div></footer>
+</body>
+</html>
