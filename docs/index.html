@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Overview | HESchema Docs</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header><nav aria-label="Main navigation"><a class="brand" href="../">HESchema</a><a href="../docs/" aria-current="true">Docs</a><a href="../playground/">Playground</a><a href="https://github.com/HarshPopat23/HESchema-">GitHub</a></nav></header>
+<main class="docs-layout">
+  <nav class="docs-sidebar" aria-label="Documentation chapters">
+    <ol>
+      <li><a href="../docs/" aria-current="page">Overview</a></li>
+      <li><a href="../docs/quickstart/">Quickstart</a></li>
+      <li><a href="../docs/keywords/">Keywords</a></li>
+      <li><a href="../docs/dialects/">Dialects</a></li>
+    </ol>
+  </nav>
+  <article class="docs-content">
+<h1>HESchema overview</h1>
+<p class="lead">HESchema extends JSON Schema with rules that validate relationships between values in the same JSON document.</p>
+
+<h2>When to use it</h2>
+<p>JSON Schema describes the shape of a document. It can require a citation to have a string <code>sourceId</code>. HESchema can also require that ID to match exactly one entry in the document’s <code>sources</code> array. Use it when individual values can be valid on their own but still disagree with one another.</p>
+
+<h2>How validation works</h2>
+<ol>
+  <li><strong>Select a dialect.</strong> Set the root <code>$schema</code> to a HESchema dialect that supports your rule. The published dialects extend JSON Schema Draft 2020-12.</li>
+  <li><strong>Describe the rule.</strong> Add a keyword such as <code>localReferences</code> alongside the usual JSON Schema keywords. In the citation example, the rule reads IDs from <code>/citations</code> and matches them against <code>/sources</code>.</li>
+  <li><strong>Run the HESchema validator.</strong> A citation pointing to <code>report-1</code> passes if exactly one included source has that ID. Change it to a missing ID and the validator reports the offending citation at <code>/citations/0</code>.</li>
+</ol>
+<p>Use a validator that implements the selected HESchema vocabulary so the custom rules are evaluated. The <a href="quickstart/">Quickstart</a> shows how to run the Python validator with this example.</p>
+
+<h2>Choose a keyword</h2>
+<dl>
+  <dt><a href="keywords/#compareFields"><code>compareFields</code></a></dt><dd>Compare two fields, such as a minimum and maximum.</dd>
+  <dt><a href="keywords/#uniqueKeys"><code>uniqueKeys</code></a></dt><dd>Require unique values or combinations of values across array items.</dd>
+  <dt><a href="keywords/#aggregateCompare"><code>aggregateCompare</code></a></dt><dd>Compare a declared count or total with values derived from an array.</dd>
+  <dt><a href="keywords/#localReferences"><code>localReferences</code></a></dt><dd>Require a reference to resolve to exactly one item in the same document.</dd>
+  <dt><a href="keywords/#sortedBy"><code>sortedBy</code></a></dt><dd>Check that array items are ordered by a selected key.</dd>
+  <dt><a href="keywords/#nonOverlapping"><code>nonOverlapping</code></a></dt><dd>Reject overlapping intervals in an array.</dd>
+  <dt><a href="keywords/#tensorShapes"><code>tensorShapes</code></a></dt><dd>Check rank, fixed widths, and shared dimensions across tensors.</dd>
+  <dt><a href="keywords/#arithmeticEquals"><code>arithmeticEquals</code></a></dt><dd>Check a supplied arithmetic result using exact decimal strings.</dd>
+</dl>
+<p><a href="keywords/#assertExpression"><code>assertExpression</code></a> is experimental. The reference shows structured JSON and CEL examples. The hosted playground shows recorded outcomes for the native keyword examples.</p>
+  </article>
+</main>
+</body>
+</html>
