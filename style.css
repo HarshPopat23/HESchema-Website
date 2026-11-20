@@ -120,20 +120,36 @@ section[id] { scroll-margin-top: 1rem; }
 
 .docs-layout {
   display: grid;
-  grid-template-columns: 12rem minmax(0, 1fr);
+  grid-template-columns: 14rem minmax(0, 1fr);
   align-items: start;
   gap: clamp(1.5rem, 4vw, 3rem);
 }
 .docs-sidebar {
   position: sticky;
   top: 1rem;
+  max-block-size: calc(100vh - 2rem);
+  overflow-y: auto;
   border-inline-end: 1px solid var(--border);
   padding-inline-end: 1rem;
 }
-.docs-sidebar ol { margin: 0; padding: 0; list-style: none; }
+.docs-sidebar details {
+  margin: 0;
+  padding: .2rem 0;
+  border: 0;
+  background: transparent;
+}
+.docs-sidebar summary { padding: .35rem .25rem; color: var(--text); }
+.docs-sidebar summary::marker { color: var(--accent); }
+.docs-sidebar ul {
+  margin: .25rem 0 .35rem .6rem;
+  padding: 0 0 0 .55rem;
+  list-style: none;
+  border-inline-start: 1px solid var(--border);
+}
 .docs-sidebar a {
   display: block;
-  padding: .5rem .75rem;
+  padding: .3rem .5rem;
+  overflow-wrap: anywhere;
   border-inline-start: 3px solid transparent;
   color: var(--muted);
   text-decoration: none;
@@ -146,16 +162,34 @@ section[id] { scroll-margin-top: 1rem; }
   font-weight: 650;
 }
 .docs-content { min-width: 0; overflow-wrap: anywhere; }
-.docs-content pre { overflow-wrap: normal; }
+.docs-content pre {
+  overflow-wrap: normal;
+  color: var(--text);
+  background: #f6f7f9;
+  border: 1px solid var(--border);
+  border-radius: .2rem;
+}
+.docs-code-key { color: #174782; font-weight: 650; }
+.docs-code-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .65rem;
+  margin-block-start: 1rem;
+}
+.docs-code-toolbar button { padding: .25rem .55rem; font-size: .85rem; }
+.docs-code-toolbar [role="status"] { color: var(--muted); font-size: .85rem; }
+.docs-code-toolbar + pre { margin-block-start: .35rem; }
 .docs-content dt { margin-block-start: .65rem; font-weight: 650; }
 .docs-content dd { margin-inline-start: 0; }
 @media (max-width: 45rem) {
   .docs-layout { grid-template-columns: minmax(0, 1fr); }
   .docs-sidebar {
     position: static;
+    max-block-size: none;
+    overflow: visible;
     border-inline-end: 0;
     border-block-end: 1px solid var(--border);
     padding: 0 0 .5rem;
   }
-  .docs-sidebar ol { display: flex; flex-wrap: wrap; gap: .25rem; }
 }
