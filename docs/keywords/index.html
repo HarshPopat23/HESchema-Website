@@ -8,8 +8,17 @@
   
 </head>
 <body>
-<header><nav aria-label="Main navigation"><a class="brand" href="../../">HESchema</a><a href="../../docs/quickstart/">Quickstart</a><a href="../../docs/keywords/">Keywords</a><a href="../../docs/dialects/">Dialects</a><a href="../../playground/">Playground</a><a href="https://github.com/HarshPopat23/HESchema-">GitHub</a></nav></header>
-<main class="reading">
+<header><nav aria-label="Main navigation"><a class="brand" href="../../">HESchema</a><a href="../../docs/" aria-current="true">Docs</a><a href="../../playground/">Playground</a><a href="https://github.com/HarshPopat23/HESchema-">GitHub</a></nav></header>
+<main class="docs-layout">
+  <nav class="docs-sidebar" aria-label="Documentation chapters">
+    <ol>
+      <li><a href="../../docs/">Overview</a></li>
+      <li><a href="../../docs/quickstart/">Quickstart</a></li>
+      <li><a href="../../docs/keywords/" aria-current="page">Keywords</a></li>
+      <li><a href="../../docs/dialects/">Dialects</a></li>
+    </ol>
+  </nav>
+  <article class="docs-content">
 <h1>Keyword reference</h1><p>Choose a keyword to see its schema, passing data, and a recorded failure.</p><ul><li><a href="#compareFields"><code>compareFields</code></a></li><li><a href="#uniqueKeys"><code>uniqueKeys</code></a></li><li><a href="#aggregateCompare"><code>aggregateCompare</code></a></li><li><a href="#localReferences"><code>localReferences</code></a></li><li><a href="#sortedBy"><code>sortedBy</code></a></li><li><a href="#nonOverlapping"><code>nonOverlapping</code></a></li><li><a href="#tensorShapes"><code>tensorShapes</code></a></li><li><a href="#arithmeticEquals"><code>arithmeticEquals</code></a></li><li><a href="#assertExpression"><code>assertExpression</code></a></li></ul><section id="compareFields"><h2><code>compareFields</code></h2><p>Compare two values in the same document.</p>
 <a href="../../playground/?example=compareFields">Try in Playground</a>
 <details open><summary>Native HESchema JSON</summary>
@@ -336,6 +345,7 @@
   ]
 }</code></pre><p>This assumes an evaluator binds <code>self</code> to the current object.</p></details>
 <p>Both illustrate the rule that <code>min</code> must be less than or equal to <code>max</code>. With numeric fields, <code>{"min": 2, "max": 3}</code> passes and <code>{"min": 4, "max": 3}</code> fails. Coercion, missing values, diagnostics, and host functions depend on the evaluator. Use the native <a href="#compareFields"><code>compareFields</code> example</a> for executable validation.</p></section>
+  </article>
 </main>
 <footer><div class="footer-inner"><a href="https://github.com/HarshPopat23/HESchema-/tree/main/vocabulary">Vocabulary specifications and conformance cases</a></div></footer>
 </body>
