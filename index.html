@@ -9,29 +9,43 @@
 </head>
 <body>
 <header><nav aria-label="Main navigation"><a class="brand" href="./">HESchema</a><a href="docs/quickstart/">Quickstart</a><a href="docs/keywords/">Keywords</a><a href="docs/dialects/">Dialects</a><a href="playground/">Playground</a><a href="https://github.com/HarshPopat23/HESchema-">GitHub</a></nav></header>
-<main>
+<main class="home">
 <section class="columns hero">
-<div><h1>Validate relationships in JSON</h1>
-<p class="lead">HESchema extends JSON Schema with rules for data that needs to agree across fields, arrays, and records.</p>
-<div class="actions"><a class="button primary" href="docs/quickstart/">Read the Docs</a><a class="button" href="playground/">Open Playground</a></div>
-</div><div class="card"><strong><code>localReferences</code></strong>
-<p>Each citation must match exactly one included source.</p><pre><code>{
-  &quot;sources&quot;: [
-    {
-      &quot;id&quot;: &quot;report-1&quot;
-    }
-  ],
-  &quot;citations&quot;: [
-    {
-      &quot;sourceId&quot;: &quot;report-1&quot;
-    }
+  <div>
+    <h1>Validate relationships in JSON</h1>
+    <p class="lead">HESchema extends JSON Schema with rules that compare values across fields, arrays, and records.</p>
+    <p>A citation can have a correctly formatted ID and still point to a source that isn't in the document. HESchema checks that the reference resolves to exactly one included source.</p>
+    <div class="actions"><a class="button primary" href="docs/quickstart/">Read the Docs</a><a class="button" href="playground/">Open Playground</a></div>
+  </div>
+  <figure class="home-code">
+    <figcaption><span class="home-code-lights" aria-hidden="true"></span>document.json</figcaption>
+    <pre><code>{
+  "sources": [{"id": <span>"report-1"</span>}],
+  "citations": [
+    {"sourceId": <span>"report-1"</span>}
   ]
-}</code></pre><p><strong>Passes.</strong> Changing the citation to <code>report-9</code> fails at <code>/citations/0</code>.</p>
-<a href="docs/keywords/#localReferences">See the full schema</a></div></section>
-<section><h2>What you can check</h2>
-<div class="columns"><article class="card"><h3>Relationships and ordering</h3><p>Compare fields, enforce unique keys, reconcile totals, resolve references, and check order or overlap.</p><a href="docs/keywords/">Browse the keyword reference</a></article>
-<article class="card"><h3>Tensor shapes and decimal arithmetic</h3><p>Check shared batch dimensions, fixed vector widths, and exact decimal results.</p><a href="docs/dialects/">Choose a dialect</a></article></div></section>
+}</code></pre>
+  </figure>
+</section>
+<section class="home-explainer" aria-labelledby="how-it-works">
+  <h2 id="how-it-works">How HESchema works</h2>
+  <div class="columns home-step">
+    <div>
+      <h3>Describe the relationship in your schema</h3>
+      <p>Choose a HESchema dialect and add a keyword that describes the rule. Here, <code>localReferences</code> checks each citation’s <code>sourceId</code> against the IDs in the document’s <code>sources</code> array.</p>
+      <a href="docs/keywords/#localReferences">See the full schema</a>
+    </div>
+    <img src="assets/reference-match.svg" width="560" height="232" alt="The citation’s sourceId and the included source’s id both contain report-1, so the check passes.">
+  </div>
+  <div class="columns home-step">
+    <img src="assets/reference-error.svg" width="560" height="232" alt="With sourceId changed to report-9, validation reports a missing reference at /citations/0.">
+    <div>
+      <h3>Find the item that breaks the rule</h3>
+      <p>Run the schema with the HESchema validator. If the citation changes to <code>report-9</code>, the validator reports <code>/citations/0</code>, the first citation in the document. That path tells you where to fix the data.</p>
+      <a href="playground/">Try the passing and failing examples</a>
+    </div>
+  </div>
+</section>
 </main>
-<footer><div class="footer-inner"><a href="https://github.com/HarshPopat23/HESchema-/tree/main/vocabulary">Vocabulary specifications and conformance cases</a></div></footer>
 </body>
 </html>
