@@ -11,20 +11,54 @@
 <header><nav aria-label="Main navigation"><a class="brand" href="../../">HESchema</a><a href="../../docs/" aria-current="true">Docs</a><a href="../../playground/">Playground</a><a href="https://github.com/HarshPopat23/HESchema-">GitHub</a></nav></header>
 <main class="docs-layout">
   <nav class="docs-sidebar" aria-label="Documentation chapters">
-    <ol>
-      <li><a href="../../docs/">Overview</a></li>
-      <li><a href="../../docs/quickstart/" aria-current="page">Quickstart</a></li>
-      <li><a href="../../docs/keywords/">Keywords</a></li>
-      <li><a href="../../docs/dialects/">Dialects</a></li>
-    </ol>
+    <details>
+      <summary>Overview</summary>
+      <ul>
+        <li><a href="../../docs/">Overview page</a></li>
+        <li><a href="../../docs/#when-to-use-it">When to use it</a></li>
+        <li><a href="../../docs/#how-validation-works">How validation works</a></li>
+        <li><a href="../../docs/#choose-a-keyword">Choose a keyword</a></li>
+      </ul>
+    </details>
+    <details open>
+      <summary>Quickstart</summary>
+      <ul>
+        <li><a href="../../docs/quickstart/" aria-current="page">Quickstart page</a></li>
+        <li><a href="../../docs/quickstart/#install-the-validator">1. Install the validator</a></li>
+        <li><a href="../../docs/quickstart/#validate-the-example">2. Validate the example</a></li>
+        <li><a href="../../docs/quickstart/#live">3. Start the live playground</a></li>
+      </ul>
+    </details>
+    <details>
+      <summary>Keywords</summary>
+      <ul>
+        <li><a href="../../docs/keywords/">Keywords page</a></li>
+        <li><a href="../../docs/keywords/#compareFields">compareFields</a></li>
+        <li><a href="../../docs/keywords/#uniqueKeys">uniqueKeys</a></li>
+        <li><a href="../../docs/keywords/#aggregateCompare">aggregateCompare</a></li>
+        <li><a href="../../docs/keywords/#localReferences">localReferences</a></li>
+        <li><a href="../../docs/keywords/#sortedBy">sortedBy</a></li>
+        <li><a href="../../docs/keywords/#nonOverlapping">nonOverlapping</a></li>
+        <li><a href="../../docs/keywords/#tensorShapes">tensorShapes</a></li>
+        <li><a href="../../docs/keywords/#arithmeticEquals">arithmeticEquals</a></li>
+        <li><a href="../../docs/keywords/#assertExpression">assertExpression</a></li>
+      </ul>
+    </details>
+    <details>
+      <summary>Dialects</summary>
+      <ul>
+        <li><a href="../../docs/dialects/">Dialects page</a></li>
+        <li><a href="../../docs/dialects/#experimental-expressions">Experimental expressions</a></li>
+      </ul>
+    </details>
   </nav>
   <article class="docs-content">
 <h1>Quickstart</h1>
 <p>Run the citation example with Python 3.11 or newer. Start at the root of the website checkout.</p>
-<h2>1. Install the validator</h2><pre><code>python -m venv .venv
+<h2 id="install-the-validator">1. Install the validator</h2><pre><code>python -m venv .venv
 . .venv/bin/activate
 python -m pip install &quot;heschema @ git+https://github.com/HarshPopat23/HESchema-.git@f81f63fc3b8000541da18d0c362ddd9c6bd60ddb&quot;</code></pre><p>On PowerShell, activate the environment with <code>.venv\Scripts\Activate.ps1</code>.</p>
-<h2>2. Validate the example</h2><p>Save this as <code>validate_example.py</code>. The example’s root <code>$schema</code> selects the Relationships v2 dialect.</p><pre><code>import json
+<h2 id="validate-the-example">2. Validate the example</h2><p>Save this as <code>validate_example.py</code>. The example’s root <code>$schema</code> selects the Relationships v2 dialect.</p><pre><code>import json
 from pathlib import Path
 from heschema.schema import SchemaEngine
 
@@ -37,5 +71,6 @@ for case in (&quot;pass&quot;, &quot;fail&quot;):
   </article>
 </main>
 <footer><div class="footer-inner"><a href="https://github.com/HarshPopat23/HESchema-/tree/main/vocabulary">Vocabulary specifications and conformance cases</a></div></footer>
+<script src="../../docs/code.js" defer></script>
 </body>
 </html>
