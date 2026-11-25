@@ -41,7 +41,7 @@
         <li><a href="../../docs/keywords/#nonOverlapping">nonOverlapping</a></li>
         <li><a href="../../docs/keywords/#tensorShapes">tensorShapes</a></li>
         <li><a href="../../docs/keywords/#arithmeticEquals">arithmeticEquals</a></li>
-        <li><a href="../../docs/keywords/#assertExpression">assertExpression</a></li>
+        <li><a href="../../docs/keywords/assertExpression/">assertExpression</a></li>
       </ul>
     </details>
     <details>
@@ -358,27 +358,7 @@
 }</code></pre>
 <p><strong>Recorded error at <code>/r</code></strong> Arithmetic rule 0 failed (add)</p></details>
 <details><summary>Options and edge cases</summary><p>Choose add, subtract, multiply, divide, or percentOf. A rounding rule can set the scale and mode. Numeric JSON tokens, exponent notation, and division by zero fail. The assertion validates the result without replacing it.</p><p><a href="https://github.com/HarshPopat23/HESchema-/tree/main/vocabulary/relationships/v4">Specification and conformance cases</a></p></details>
-</section><section id="assertExpression"><h2><code>assertExpression</code></h2><p>This is experimental documentation. The examples below illustrate proposed evaluator bindings. They require an expression evaluator and are outside the native dialects and playground in this release.</p>
-<details><summary>Structured JSON illustration</summary><pre><code>{
-  &quot;assertExpression&quot;: [
-    {
-      &quot;&lt;=&quot;: [
-        {
-          &quot;var&quot;: &quot;min&quot;
-        },
-        {
-          &quot;var&quot;: &quot;max&quot;
-        }
-      ]
-    }
-  ]
-}</code></pre><p>The prefix operator takes two operands resolved from the current object.</p></details>
-<details><summary>CEL illustration</summary><pre><code>{
-  &quot;assertExpression&quot;: [
-    &quot;self.min &lt;= self.max&quot;
-  ]
-}</code></pre><p>This assumes an evaluator binds <code>self</code> to the current object.</p></details>
-<p>Both illustrate the rule that <code>min</code> must be less than or equal to <code>max</code>. With numeric fields, <code>{"min": 2, "max": 3}</code> passes and <code>{"min": 4, "max": 3}</code> fails. Coercion, missing values, diagnostics, and host functions depend on the evaluator. Use the native <a href="#compareFields"><code>compareFields</code> example</a> for executable validation.</p></section>
+</section><section id="assertExpression"><h2><code>assertExpression</code></h2><p>Run JSON-only expression trees with pointer access, scoped predicates, strict comparisons and lazy Boolean conditions using the Python validator.</p><p><a href="assertExpression/">Read the complete assertExpression reference and worked examples</a></p></section>
   </article>
 </main>
 <footer><div class="footer-inner"><a href="https://github.com/HarshPopat23/HESchema-/tree/main/vocabulary">Vocabulary specifications and conformance cases</a></div></footer>

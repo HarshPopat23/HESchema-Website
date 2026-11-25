@@ -10,5 +10,5 @@ http://127.0.0.1:8000/playground/. The Python server is for loopback development
 
 The examples in `examples.json` are based on HESchema's vocabulary
 conformance cases, with a citation example for localReferences. Their recorded
-outcomes were produced by HESchema's Python SchemaEngine. Expression examples
-illustrate experimental syntax and do not run in the native playground.
+outcomes were produced by HESchema's Python SchemaEngine. The assertExpression reference documents the Python implementation and local execution.
+The static playground does not yet include an assertion preset.

@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>assertExpression | HESchema</title>
+  <link rel="stylesheet" href="../../../style.css">
+
+</head>
+<body>
+<header><nav aria-label="Main navigation"><a class="brand" href="../../../">HESchema</a><a href="../../../docs/" aria-current="true">Docs</a><a href="../../../playground/">Playground</a><a href="https://github.com/HarshPopat23/HESchema-">GitHub</a></nav></header>
+<main class="docs-layout">
+  <nav class="docs-sidebar" aria-label="Documentation chapters">
+    <details>
+      <summary>Overview</summary>
+      <ul>
+        <li><a href="../../../docs/">Overview page</a></li>
+        <li><a href="../../../docs/#when-to-use-it">When to use it</a></li>
+        <li><a href="../../../docs/#how-validation-works">How validation works</a></li>
+        <li><a href="../../../docs/#choose-a-keyword">Choose a keyword</a></li>
+      </ul>
+    </details>
+    <details>
+      <summary>Quickstart</summary>
+      <ul>
+        <li><a href="../../../docs/quickstart/">Quickstart page</a></li>
+        <li><a href="../../../docs/quickstart/#install-the-validator">1. Install the validator</a></li>
+        <li><a href="../../../docs/quickstart/#validate-the-example">2. Validate the example</a></li>
+        <li><a href="../../../docs/quickstart/#live">3. Start the live playground</a></li>
+      </ul>
+    </details>
+    <details open>
+      <summary>Keywords</summary>
+      <ul>
+        <li><a href="../../../docs/keywords/" aria-current="page">Keywords page</a></li>
+        <li><a href="../../../docs/keywords/#compareFields">compareFields</a></li>
+        <li><a href="../../../docs/keywords/#uniqueKeys">uniqueKeys</a></li>
+        <li><a href="../../../docs/keywords/#aggregateCompare">aggregateCompare</a></li>
+        <li><a href="../../../docs/keywords/#localReferences">localReferences</a></li>
+        <li><a href="../../../docs/keywords/#sortedBy">sortedBy</a></li>
+        <li><a href="../../../docs/keywords/#nonOverlapping">nonOverlapping</a></li>
+        <li><a href="../../../docs/keywords/#tensorShapes">tensorShapes</a></li>
+        <li><a href="../../../docs/keywords/#arithmeticEquals">arithmeticEquals</a></li>
+        <li><a href="../../../docs/keywords/assertExpression/">assertExpression</a></li>
+      </ul>
+    </details>
+    <details>
+      <summary>Dialects</summary>
+      <ul>
+        <li><a href="../../../docs/dialects/">Dialects page</a></li>
+        <li><a href="../../../docs/dialects/#experimental-expressions">Experimental expressions</a></li>
+      </ul>
+    </details>
+  </nav>
+  <article class="docs-content">
+<h1>assertExpression</h1>
+<p>Write cross-field assertions as JSON expression trees. The experimental v1 dialect is implemented in HESchema's Python SchemaEngine. Each expression must evaluate to the Boolean <code>true</code> to pass.</p>
+<p>This page describes the implementation merged in HESchema revision <a href="https://github.com/HarshPopat23/HESchema-/commit/46df47ec05b962d0a7b4da574340fcdacec94c56"><code>46df47e</code></a>. It uses the versioned dialect below.</p>
+<nav aria-label="On this page"><ul><li><a href="#example">Full schema and data</a></li><li><a href="#run">Run locally</a></li><li><a href="#operators">Every operator</a></li><li><a href="#scope">Pointers and scope</a></li><li><a href="#checking">Registration and errors</a></li><li><a href="#limits">Limits and compatibility</a></li><li><a href="#gaps">The 15-gap roadmap</a></li></ul></nav>
+<h2 id="example">Full schema and data</h2><p>Every item's quantity must be at most the containing object's limit. Standard JSON Schema keywords establish the required fields and numeric types.</p><pre><code>{
+  &quot;$schema&quot;: &quot;https://raw.githubusercontent.com/HarshPopat23/HESchema-/main/src/heschema/assert-expression-v1.json&quot;,
+  &quot;type&quot;: &quot;object&quot;,
+  &quot;properties&quot;: {
+    &quot;limit&quot;: {
+      &quot;type&quot;: &quot;number&quot;
+    },
+    &quot;items&quot;: {
+      &quot;type&quot;: &quot;array&quot;,
+      &quot;items&quot;: {
+        &quot;type&quot;: &quot;object&quot;,
+        &quot;properties&quot;: {
+          &quot;quantity&quot;: {
+            &quot;type&quot;: &quot;number&quot;
+          }
+        },
+        &quot;required&quot;: [
+          &quot;quantity&quot;
+        ]
+      }
+    }
+  },
+  &quot;required&quot;: [
+    &quot;limit&quot;,
+    &quot;items&quot;
+  ],
+  &quot;assertExpression&quot;: {
+    &quot;all&quot;: {
+      &quot;array&quot;: {
+        &quot;get&quot;: {
+          &quot;from&quot;: &quot;root&quot;,
+          &quot;path&quot;: &quot;/items&quot;
+        }
+      },
+      &quot;as&quot;: &quot;item&quot;,
+      &quot;test&quot;: {
+        &quot;lte&quot;: [
+          {
+            &quot;get&quot;: {
+              &quot;from&quot;: &quot;item&quot;,
+              &quot;path&quot;: &quot;/quantity&quot;
+            }
+          },
+          {
+            &quot;get&quot;: {
+              &quot;from&quot;: &quot;root&quot;,
+              &quot;path&quot;: &quot;/limit&quot;
+            }
+          }
+        ]
+      }
+    }
+  }
+}</code></pre><h3>Passing data</h3><pre><code>{
+  &quot;limit&quot;: 3,
+  &quot;items&quot;: [
+    {
+      &quot;quantity&quot;: 2
+    }
+  ]
+}</code></pre><h3>Failing data</h3><pre><code>{
+  &quot;limit&quot;: 3,
+  &quot;items&quot;: [
+    {
+      &quot;quantity&quot;: 4
+    }
+  ]
+}</code></pre>
+<p>The failing assertion reports <code>ASSERT_EXPRESSION_FALSE</code>. The instance location is the containing object, the empty JSON Pointer. V1 does not automatically report <code>/items/0/quantity</code>.</p>
+<h2 id="run">Run locally</h2><p>Follow the <a href="../../quickstart/">Quickstart</a> to install the pinned validator. Save the schema above as <code>schema.json</code> and either data example as <code>data.json</code>.</p>
+<pre><code>import json
+from pathlib import Path
+from heschema.schema import SchemaEngine
+
+schema = json.loads(Path("schema.json").read_text())
+data = json.loads(Path("data.json").read_text())
+errors = SchemaEngine().errors(schema, data)
+print(json.dumps({"valid": not errors, "errors": errors}, indent=2))</code></pre>
+<p>The passing data returns <code>{"valid": true, "errors": []}</code>. With the failing data, valid is false and errors includes the assertion diagnostic. The hosted playground currently has recorded examples for the eight dedicated keywords. Use the local Python example for this dialect.</p>
+<h2 id="operators">Every operator</h2>
+<p>An expression is an object with exactly one operator. Operands are expressions. The contents of <code>literal</code> and pointer/binding metadata are data.</p>
+<div class="table"><table><thead><tr><th>Operator</th><th>Arguments</th><th>Behavior</th></tr></thead><tbody>
+<tr><td>literal</td><td>Any JSON value</td><td>Return the value without interpreting its members.</td></tr>
+<tr><td>get</td><td>from and path</td><td>Resolve a pointer in a named binding. Missing values produce an evaluation error.</td></tr>
+<tr><td>exists</td><td>from and path</td><td>True when the pointer resolves, including to null or an empty string.</td></tr>
+<tr><td>eq, ne</td><td>Exactly two expressions</td><td>Structural equality and inequality.</td></tr>
+<tr><td>lt, lte, gt, gte</td><td>Exactly two expressions</td><td>Strict ordering of finite numbers. Strings and booleans fail.</td></tr>
+<tr><td>not</td><td>One expression</td><td>Negate a Boolean.</td></tr>
+<tr><td>and, or</td><td>Nonempty expression array</td><td>Evaluate Boolean operands left to right and short-circuit.</td></tr>
+<tr><td>if</td><td>test, then, else</td><td>Evaluate a Boolean test and only the selected branch.</td></tr>
+<tr><td>all, some</td><td>array, as, test</td><td>Evaluate the test with a named binding for each visited item.</td></tr>
+</tbody></table></div>
+<p><code>all</code> on an empty array returns true; <code>some</code> on an empty array returns false. Add <code>minItems: 1</code> when an item is required.</p>
+<details><summary>Literal values</summary><pre><code>{
+  &quot;literal&quot;: {
+    &quot;status&quot;: &quot;ok&quot;,
+    &quot;tags&quot;: [
+      null,
+      true
+    ]
+  }
+}</code></pre></details>
+<details><summary>Read a value</summary><pre><code>{
+  &quot;get&quot;: {
+    &quot;from&quot;: &quot;root&quot;,
+    &quot;path&quot;: &quot;/a.b&quot;
+  }
+}</code></pre></details>
+<details><summary>Check presence</summary><pre><code>{
+  &quot;exists&quot;: {
+    &quot;from&quot;: &quot;root&quot;,
+    &quot;path&quot;: &quot;/email&quot;
+  }
+}</code></pre></details>
+<details><summary>Compare content</summary><pre><code>{
+  &quot;eq&quot;: [
+    {
+      &quot;get&quot;: {
+        &quot;from&quot;: &quot;root&quot;,
+        &quot;path&quot;: &quot;/a&quot;
+      }
+    },
+    {
+      &quot;get&quot;: {
+        &quot;from&quot;: &quot;root&quot;,
+        &quot;path&quot;: &quot;/b&quot;
+      }
+    }
+  ]
+}</code></pre></details>
+<details><summary>Compare numbers</summary><pre><code>{
+  &quot;lte&quot;: [
+    {
+      &quot;get&quot;: {
+        &quot;from&quot;: &quot;root&quot;,
+        &quot;path&quot;: &quot;/min&quot;
+      }
+    },
+    {
+      &quot;get&quot;: {
+        &quot;from&quot;: &quot;root&quot;,
+        &quot;path&quot;: &quot;/max&quot;
+      }
+    }
+  ]
+}</code></pre></details>
+<details><summary>Negate a Boolean</summary><pre><code>{
+  &quot;not&quot;: {
+    &quot;literal&quot;: false
+  }
+}</code></pre></details>
+<details><summary>Require all conditions</summary><pre><code>{
+  &quot;and&quot;: [
+    {
+      &quot;literal&quot;: true
+    },
+    {
+      &quot;exists&quot;: {
+        &quot;from&quot;: &quot;root&quot;,
+        &quot;path&quot;: &quot;/email&quot;
+      }
+    }
+  ]
+}</code></pre></details>
+<details><summary>Accept a condition</summary><pre><code>{
+  &quot;or&quot;: [
+    {
+      &quot;literal&quot;: true
+    },
+    {
+      &quot;get&quot;: {
+        &quot;from&quot;: &quot;root&quot;,
+        &quot;path&quot;: &quot;/absent&quot;
+      }
+    }
+  ]
+}</code></pre></details>
+<details><summary>Select a branch</summary><pre><code>{
+  &quot;if&quot;: {
+    &quot;test&quot;: {
+      &quot;literal&quot;: true
+    },
+    &quot;then&quot;: {
+      &quot;literal&quot;: true
+    },
+    &quot;else&quot;: {
+      &quot;get&quot;: {
+        &quot;from&quot;: &quot;root&quot;,
+        &quot;path&quot;: &quot;/absent&quot;
+      }
+    }
+  }
+}</code></pre></details>
+<details><summary>Find a matching item</summary><pre><code>{
+  &quot;some&quot;: {
+    &quot;array&quot;: {
+      &quot;get&quot;: {
+        &quot;from&quot;: &quot;root&quot;,
+        &quot;path&quot;: &quot;/flags&quot;
+      }
+    },
+    &quot;as&quot;: &quot;flag&quot;,
+    &quot;test&quot;: {
+      &quot;get&quot;: {
+        &quot;from&quot;: &quot;flag&quot;,
+        &quot;path&quot;: &quot;&quot;
+      }
+    }
+  }
+}</code></pre></details>
+<p>These are expression fragments. The literal and get examples can return non-Boolean values for use as operands. At the top level, assertExpression requires a Boolean result.</p>
+<h2 id="scope">Pointers and scope</h2>
+<p>Root is the instance at the schema containing the assertion. At the schema root this is the document. Under items or a local reference it is the item or object being validated. It does not automatically refer to the outermost document.</p>
+<ul><li><code>/a.b</code> selects a literal dotted member; <code>/a/b</code> selects a nested member.</li><li><code>/</code> selects an empty member name. The empty pointer selects the binding itself.</li><li><code>~1</code> escapes a slash and <code>~0</code> escapes a tilde.</li><li>Array indices must use canonical nonnegative integers, such as 0 or 12.</li></ul>
+<p>All and some introduce a fresh identifier with as. A nested predicate retains access to root and enclosing predicate bindings. Reusing root or an enclosing name is rejected. Bindings never execute user code.</p>
+<h2 id="checking">Registration and errors</h2>
+<p>Use SchemaEngine so registration checks operator names, operand counts, pointers and lexical bindings in every branch. An unknown operator in an unused else branch is still rejected. Meta-schema validation alone does not perform all these checks.</p>
+<ul><li><strong>Invalid schema</strong> raises ValueError during registration. Examples include an unknown operator, an unbound name, malformed pointer or wrong argument count.</li><li><strong>ASSERT_EXPRESSION_FALSE</strong> means a valid rule evaluated to false.</li><li><strong>ASSERT_EXPRESSION_ERROR</strong> means an operand type, missing get pointer, final result type or evaluation budget failed.</li></ul>
+<p>Runtime type checks are performed only on evaluated branches. V1 has no static type inference. For example, or with literal true skips a missing-pointer operand, while registration still checks that skipped operand's structure.</p>
+<p>SchemaEngine diagnostics include keyword assertExpression, instanceLocation, schemaLocation and evaluationLocation. The two assertion reason identifiers currently appear in message text. The outer diagnostic code remains the existing SCHEMA_INVALID. Per-item expression provenance and dedicated machine-readable reason fields are future work.</p>
+<h2 id="limits">Limits and compatibility</h2>
+<ul><li>Expression operator nesting is limited to 48. Evaluation allows 10,000 visited expression nodes, shared across predicates.</li><li>Existing schema and instance complexity limits also apply. Literal content is handled as data.</li><li>Objects compare independently of member order; arrays compare in order. Boolean true differs from numeric 1; 1 equals 1.0.</li><li>Python integers preserve precision. Floats retain the precision already supplied by the JSON parser. Rounded input cannot be recovered by an expression.</li><li>The standalone assertion dialect includes standard Draft 2020-12 validation and assertExpression. It does not combine the eight dedicated keywords.</li><li>Declare the dialect at the schema root. Custom dialects use one schema resource and local static references. Nested dialect switches and external references are rejected.</li><li>This dialect runs in the Python backend. The optional Blaze backend and provider constrained decoding do not implement its custom evaluator.</li></ul>
+<p>A passing assertion proves the supplied relationship. Comparing an extracted value with an original invoice still requires independently trusted source data.</p>
+<h2 id="gaps">The 15-gap roadmap</h2>
+<p>V1 supports arbitrary pointer keys, literal values, presence checks, structural equality, lexical predicate scope, empty-array semantics, strict numeric operands and lazy built-in conditionals. Registration checks every branch's structure and basic assertion diagnostics are available.</p>
+<p>Dynamic regex, civil-date and timestamp operators, exact decimal expressions, Unicode slicing and custom lazy extensions remain future work. Exact numeric fidelity also depends on ingestion. Per-item diagnostics and static type inference remain limited. This custom JSON expression language is separate from the proposed stock JsonLogic experiment in Blaze.</p>
+<p><a href="https://github.com/HarshPopat23/HESchema-/tree/main/vocabulary/assert-expression/v1">Versioned vocabulary documentation</a> · <a href="https://github.com/HarshPopat23/HESchema-/blob/main/src/heschema/assert_expression.py">Evaluator source</a> · <a href="https://github.com/HarshPopat23/HESchema-/blob/main/tests/test_assert_expression.py">Conformance tests</a></p>
+
+  </article>
+</main>
+<footer><div class="footer-inner"><a href="https://github.com/HarshPopat23/HESchema-/tree/main/vocabulary">Vocabulary specifications and conformance cases</a></div></footer>
+<script src="../../../docs/code.js" defer></script>
+</body>
+</html>
